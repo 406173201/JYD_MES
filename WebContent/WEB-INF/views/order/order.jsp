@@ -113,8 +113,8 @@
 	</div>
 
 <%@ include file="orderFrom/orderFrom.jsp" %>
-<script  src="order.js"></script> 
 <%@ include file="orderFrom/orderUpdateForm.jsp" %>
+<script  src="order.js"></script> 
 
 
 

@@ -2,10 +2,16 @@
 <html>
 <head>
 <title>订单操作</title>
+<!-- jsp动态导入 -->
+<%-- <jsp:include page="/common/backend_common.jsp" />
+<jsp:include page="/common/page.jsp" />
+<jsp:include page="/template/orderListTemplate.jsp" /> --%>
 <%@ include file="/common/backend_common.jsp" %>
 <%@ include file="/common/page.jsp" %>
 <%@ include file="/template/orderBatchListTemplate.jsp" %>
-<script src="orderBatch.js"></script> 
+
+<%-- <jsp:include page="orderJs.jsp" />
+ --%>
 </head>
 <body class="no-skin" youdao="bind" style="background: white">
 	<input id="gritter-light" checked="" type="checkbox"
@@ -104,6 +110,8 @@
 			</div>
 		</div>
 	</div>
+	<%@ include file="orderFrom/orderUpdateForm.jsp" %>
 	<%@ include file="orderFrom/orderFrom.jsp" %>
+	<script src="orderBatch.js"></script> 
 </body>
 </html>

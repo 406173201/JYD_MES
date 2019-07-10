@@ -50,4 +50,12 @@ public class OrderController {
 		return JsonData.success();
 	}
 	
+	//updata
+	@RequestMapping("/update.json")
+	@ResponseBody
+	public JsonData updataAjax(MesOrderVo orderVo) {
+		System.out.println(orderVo.toString());
+		   orderService.updataOrders(orderVo);
+		return JsonData.success();
+	}
 }

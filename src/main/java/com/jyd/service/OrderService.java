@@ -13,6 +13,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Service;
 
 import com.jyd.exception.ParamException;
+import com.google.common.base.Preconditions;
 import com.jyd.beans.PageQuery;
 import com.jyd.beans.PageResult;
 import com.jyd.dao.MesOrderCustomerMapper;
@@ -133,6 +134,42 @@ public class OrderService {
 		}
 
 
+	
+		//uptate 
+		public void updataOrders(MesOrderVo orderVo) {
+			BeanValidator.check(orderVo);
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			//做查询判断是否存在
+			MesOrder before = mesOrderMapper.selectByPrimaryKey(orderVo.getId());
+			Preconditions.checkNotNull(before, "待更新的材料不存在");
+			//vo -- po
+			try {
+				MesOrder after = MesOrder.builder().id(orderVo.getId())
+						.orderClientname(orderVo.getOrderClientname())//
+						.orderProductname(orderVo.getOrderProductname()).orderContractid(orderVo.getOrderContractid())//
+						.orderImgid(orderVo.getOrderImgid()).orderMaterialname(orderVo.getOrderMaterialname())
+						.orderCometime(MyStringUtils.string2Date(orderVo.getComeTime(), null))//
+						.orderCommittime(MyStringUtils.string2Date(orderVo.getCommitTime(), null))
+						.orderInventorystatus(orderVo.getOrderInventorystatus()).orderStatus(orderVo.getOrderStatus())//
+						.orderMaterialsource(orderVo.getOrderMaterialsource())
+						.orderHurrystatus(orderVo.getOrderHurrystatus()).orderStatus(orderVo.getOrderStatus())
+						.orderRemark(orderVo.getOrderRemark()).build();
+				
+				// 设置用户的登录信息
+				// TODO
+				after.setOrderOperator("tom");
+				after.setOrderOperateIp("127.0.0.1");
+				after.setOrderOperateTime(new Date());
+				mesOrderMapper.updateByPrimaryKeySelective(after);
+			} catch (Exception e) {
+				throw new SysMineException("更改过程有问题");
+			}
+			
+			
+			
+		}
+		
+		
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// 1 默认生成代码
@@ -237,6 +274,9 @@ public class OrderService {
 			return "IdGenerator [ids=" + ids + "]";
 		}
 	}
+
+
+
 
 
 	
