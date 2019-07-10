@@ -2,6 +2,16 @@ package com.jyd.model;
 
 import java.util.Date;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+
+@Builder
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class MesOrder {
     private Integer id;
 

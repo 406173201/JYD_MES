@@ -20,8 +20,13 @@ public class TestConteoller {
 	private TestServlet testServlet;
 	
 	@RequestMapping("/test.page")
-    public ModelAndView index() {
-        return new ModelAndView("/test");
+    public ModelAndView test() {
+        return new ModelAndView("test");
+    }
+	
+	@RequestMapping("/index.page")
+    public String index() {
+        return "admin";
     }
 	
 	@RequestMapping("/test.json")
@@ -31,7 +36,7 @@ public class TestConteoller {
 		ModelAndView mv=new ModelAndView();
 		MesOrder ms=testServlet.getMesOrders();
 		mv.addObject("name",ms.getOrderClientname());//q
-		mv.setViewName("/test");
+		mv.setViewName("test");
 		return mv;
 	}
 }
