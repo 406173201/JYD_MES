@@ -1,3 +1,6 @@
 eclipse.preferences.version=1
-encoding//WebContent/template/orderTemplate.jsp=UTF-8
+encoding//WebContent/WEB-INF/views/order/order.js=UTF-8
+encoding//WebContent/WEB-INF/views/plan/plan.js=UTF-8
+encoding//WebContent/template/order/orderTemplate.jsp=UTF-8
+encoding//WebContent/template/plan/planListTemplate.jsp=UTF-8
 encoding/<project>=UTF-8

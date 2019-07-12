@@ -22,7 +22,7 @@
 	<mvc:resources location="/assets/" mapping="/assets/**" />
 	<mvc:resources location="/ztree/" mapping="/ztree/**" />
 	<mvc:resources location="/WEB-INF/views/order/" mapping="/order/**"/>
-	<!-- <mvc:resources location="/WEB-INF/views/plan/" mapping="/plan/**"/> -->
+	<mvc:resources location="/WEB-INF/views/plan/" mapping="/plan/**"/>
 	<!-- <mvc:resources location="/WEB-INF/views/product/" mapping="/product/**"/> -->
 	<!-- <mvc:resources location="/WEB-INF/views/storage/" mapping="/storage/**"/> -->
 	<!-- <mvc:resources location="/WEB-INF/views/stock/" mapping="/stock/**"/> -->

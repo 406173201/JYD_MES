@@ -38,9 +38,27 @@ public class OrderService {
 	@Resource
 	private SqlSession sqlSession;
 	
+	@Resource
+	private PlanService planService;
+	
 	// 一开始就定义一个id生成器
 		private IdGenerator ig = new IdGenerator();
 
+		//批量
+		public void orderBatchStartAjax(String ids) {
+			
+			if(ids != null && ids.length() > 0) {
+				//处理字符串，获取所有的id值并且存放到数组idArray中
+				String[] idArray = ids.split("&");
+				//批量处理
+				//数据库中使用 update mes_order set order_status=1 where id in  [x1,x2,x3....]
+				mesOrderCustomerMapper.batchStart(idArray);
+				//批量启动订单
+				planService.startPlansByOrderIds(idArray);
+			}
+			
+		}
+		
 		
 		//分页
 		public Object searchPageList(SearchOrderParam param, PageQuery page) {
@@ -69,7 +87,7 @@ public class OrderService {
 				throw new ParamException("传入的日期格式有问题，正确格式为：yyyy-MM-dd");
 			}
 			
-			int count=mesOrderCustomerMapper.countBySearchDto(dto);
+			int count=mesOrderCustomerMapper.countBySearchDto(dto); 
 			if(count>0) {
 				List<MesOrder> orderList=mesOrderCustomerMapper.getPageListBySearchDto(dto, page);
 				return PageResult.<MesOrder>builder().total(count).data(orderList).build();
@@ -107,8 +125,10 @@ public class OrderService {
 				mesOrder.setOrderOperateTime(new Date());
 				//批量添加未启动的订单
 				//
+				if(mesOrder.getOrderStatus() == 1) {
+					planService.insertSelective(mesOrder);
+				}
 				mesOrderBatchMapper.insertSelective(mesOrder);
-				
 			} catch (Exception e) {
 				throw new SysMineException("创建过程有问题");
 			}
@@ -274,6 +294,9 @@ public class OrderService {
 			return "IdGenerator [ids=" + ids + "]";
 		}
 	}
+
+
+	
 
 
 

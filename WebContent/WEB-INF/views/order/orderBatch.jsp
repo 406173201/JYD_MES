@@ -3,13 +3,12 @@
 <head>
 <title>订单操作</title>
 <!-- jsp动态导入 -->
-<%-- <jsp:include page="/template/orderListTemplate.jsp" /> --%> --%>
+<%-- <jsp:include page="/template/orderListTemplate.jsp" /> --%>
 <%@ include file="/common/backend_common.jsp" %>
 <%@ include file="/common/page.jsp" %>
-<%@ include file="/template/orderBatchListTemplate.jsp" %>
+<%@ include file="/template/order/orderBatchListTemplate.jsp" %>
 
-<%-- <jsp:include page="orderJs.jsp" />
- --%>
+<%-- <jsp:include page="orderJs.jsp" />--%>
 </head>
 <body class="no-skin" youdao="bind" style="background: white">
 	<input id="gritter-light" checked="" type="checkbox"

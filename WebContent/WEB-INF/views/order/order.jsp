@@ -4,7 +4,7 @@
 <title>订单管理</title>
 	<jsp:include page="/common/backend_common.jsp" />
 	<jsp:include page="/common/page.jsp" />
-	<jsp:include page="/template/orderTemplate.jsp" />
+	<jsp:include page="/template/order/orderTemplate.jsp" />
 	
 </head>
 <body class="no-skin" youdao="bind" style="background: white">
@@ -115,8 +115,5 @@
 <%@ include file="orderFrom/orderFrom.jsp" %>
 <%@ include file="orderFrom/orderUpdateForm.jsp" %>
 <script  src="order.js"></script> 
-
-
-
 </body>
 </html>

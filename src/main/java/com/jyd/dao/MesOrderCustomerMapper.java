@@ -16,6 +16,8 @@ public interface MesOrderCustomerMapper {
 
 	List<MesOrder> getPageListBySearchDto(@Param("dto") SearchOrderDto dto,@Param("page") PageQuery page);
 
+	void batchStart(@Param("ids") String[] idArray);
+
 
 
 }

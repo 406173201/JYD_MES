@@ -34,6 +34,15 @@ public class OrderController {
         return FPath+"orderBatch";   
     }
 	
+	//批量启动
+	@RequestMapping("/orderBatchStart.json")
+	@ResponseBody
+	public JsonData orderBatchStartAjax(String ids) {
+		System.out.println(ids);
+		orderService.orderBatchStartAjax(ids);
+		return JsonData.success();
+	}
+	
 	@RequestMapping("/order.json")
 	@ResponseBody
 	public JsonData orderJson(PageQuery page,SearchOrderParam param) {
