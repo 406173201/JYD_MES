@@ -124,7 +124,7 @@ public class OrderService {
 				mesOrder.setOrderOperateIp("127.0.0.1");
 				mesOrder.setOrderOperateTime(new Date());
 				//批量添加未启动的订单
-				//
+				//订单为启动状态添加计划
 				if(mesOrder.getOrderStatus() == 1) {
 					planService.insertSelective(mesOrder);
 				}
