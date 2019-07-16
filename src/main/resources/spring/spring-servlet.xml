@@ -16,14 +16,18 @@
 		base-package="com.jyd.test" />
 
 	<!-- 放行静态资源 -->
-	<mvc:resources location="/js/"  mapping="/js/**" />
+	<mvc:resources location="/js/" mapping="/js/**" />
 	<mvc:resources location="/css/" mapping="/css/**" />
-	<mvc:resources location="/bootstrap3.3.5/" mapping="/bootstrap3.3.5/**" />
+	<mvc:resources location="/bootstrap3.3.5/"
+		mapping="/bootstrap3.3.5/**" />
 	<mvc:resources location="/assets/" mapping="/assets/**" />
 	<mvc:resources location="/ztree/" mapping="/ztree/**" />
-	<mvc:resources location="/WEB-INF/views/order/" mapping="/order/**"/>
-	<mvc:resources location="/WEB-INF/views/plan/" mapping="/plan/**"/>
-	<!-- <mvc:resources location="/WEB-INF/views/product/" mapping="/product/**"/> -->
+	<mvc:resources location="/WEB-INF/views/order/"
+		mapping="/order/**" />
+	<mvc:resources location="/WEB-INF/views/plan/"
+		mapping="/plan/**" />
+	<mvc:resources location="/WEB-INF/views/product/"
+		mapping="/product/**" />
 	<!-- <mvc:resources location="/WEB-INF/views/storage/" mapping="/storage/**"/> -->
 	<!-- <mvc:resources location="/WEB-INF/views/stock/" mapping="/stock/**"/> -->
 	<!-- <mvc:resources location="/WEB-INF/views/factory/" mapping="/factory/**"/> -->
@@ -33,10 +37,11 @@
 
 
 	<!-- 配置全局异常类 -->
-    <bean class="com.jyd.common.SpringExceptionResolver"></bean>
+	<bean class="com.jyd.common.SpringExceptionResolver"></bean>
 
-	 <!-- 配置全局上下文 -->
-    <bean id="application" class="com.jyd.common.ApplicationContextHelper"></bean>
+	<!-- 配置全局上下文 -->
+	<bean id="application"
+		class="com.jyd.common.ApplicationContextHelper"></bean>
 
 	<!-- 3.配置视图解析器 -->
 	<bean

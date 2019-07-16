@@ -4,13 +4,17 @@ import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
+@ToString
 public class MesProduct {
     private Integer id;
 
@@ -37,6 +41,8 @@ public class MesProduct {
     private String productMaterialname;
 
     private String productImgid;
+
+    private String productHeatid;
 
     private String productMaterialsource;
 
@@ -152,6 +158,14 @@ public class MesProduct {
 
     public void setProductImgid(String productImgid) {
         this.productImgid = productImgid == null ? null : productImgid.trim();
+    }
+
+    public String getProductHeatid() {
+        return productHeatid;
+    }
+
+    public void setProductHeatid(String productHeatid) {
+        this.productHeatid = productHeatid == null ? null : productHeatid.trim();
     }
 
     public String getProductMaterialsource() {

@@ -7,14 +7,21 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Preconditions;
+import com.jyd.beans.PageQuery;
+import com.jyd.beans.PageResult;
 import com.jyd.dao.MesProductCustomerMapper;
 import com.jyd.dao.MesProductMapper;
+import com.jyd.dto.SearchProductDto;
+import com.jyd.exception.ParamException;
 import com.jyd.exception.SysMineException;
 import com.jyd.model.MesProduct;
 import com.jyd.param.MesProductVo;
+import com.jyd.param.SearchProductParam;
 import com.jyd.util.BeanValidator;
 
 @Service
@@ -32,8 +39,122 @@ public class ProductService {
 
 	// 一开始就定义一个id生成器
 	private IdGenerator ig = new IdGenerator();
+	
+	//绑定页面分页
+	public PageResult<MesProduct> productBindSearchPage(SearchProductParam param, PageQuery page) {
+		BeanValidator.check(param);
+		BeanValidator.check(page);
+		SearchProductDto dto= new SearchProductDto();
+		if(StringUtils.isNotBlank(param.getKeyword())) {
+			dto.setKeyword("%"+param.getKeyword()+"%");
+		}
+		if(StringUtils.isNotBlank(param.getSearch_msource())) {
+			dto.setSearch_msource(param.getSearch_msource());
+		}
+		
+		int count =mesProductCustomerMapper.countBySearchDto(dto);
+		if(count > 0) {
+			List<MesProduct> mesProducts =mesProductCustomerMapper.productBindSearchPage(dto,page);
+			return PageResult.<MesProduct>builder().total(count).data(mesProducts).build();
+		}
+		return PageResult.<MesProduct>builder().build();
+	}
+	
+	//查看库房页面分页
+	public PageResult<MesProduct> seacheProductComeList(SearchProductParam param, PageQuery page) {
+		BeanValidator.check(param);
+		BeanValidator.check(page);
+		SearchProductDto dto= new SearchProductDto();
+		if(StringUtils.isNotBlank(param.getKeyword())) {
+			dto.setKeyword("%"+param.getKeyword()+"%");
+		}
+		if(StringUtils.isNotBlank(param.getSearch_msource())) {
+			dto.setSearch_msource(param.getSearch_msource());
+		}
+		
+		int count =mesProductCustomerMapper.countBySearchDto(dto);
+		if(count > 0) {
+			List<MesProduct> mesProducts =mesProductCustomerMapper.seacheProductComeList(dto,page);
+			return PageResult.<MesProduct>builder().total(count).data(mesProducts).build();
+		}
+		return PageResult.<MesProduct>builder().build();
+	}
+
+	//钢锭查询分页
+	public PageResult<MesProduct> seacheproductIronList(SearchProductParam param, PageQuery page) {
+		BeanValidator.check(param);
+		BeanValidator.check(page);
+		SearchProductDto dto= new SearchProductDto();
+		if(StringUtils.isNotBlank(param.getKeyword())) {
+			dto.setKeyword("%"+param.getKeyword()+"%");
+		}
+		if(StringUtils.isNotBlank(param.getSearch_msource())) {
+			dto.setSearch_msource("钢锭");
+		}
+		if(StringUtils.isNotBlank(param.getSearch_status())) {
+			dto.setSearch_status(Integer.parseInt(param.getSearch_status()));
+		}
+		int count =mesProductCustomerMapper.countBySearchDto(dto);
+		if(count > 0) {
+			List<MesProduct> mesProducts =mesProductCustomerMapper.seacheProductIronList(dto,page);
+			return PageResult.<MesProduct>builder().total(count).data(mesProducts).build();
+		}
+		return PageResult.<MesProduct>builder().build();
+	}
 
 
+	//批量倒库页面分页
+	public PageResult<MesProduct> seacheProductList(SearchProductParam param, PageQuery page) {
+		//校验
+		BeanValidator.check(param);
+		BeanValidator.check(page);
+		SearchProductDto dto= new SearchProductDto();
+		if(StringUtils.isNotBlank(param.getKeyword())) {
+			dto.setKeyword("%"+param.getKeyword()+"%");
+		}
+		if(StringUtils.isNotBlank(param.getSearch_msource())) {
+			dto.setSearch_msource(param.getSearch_msource());
+		}
+		int count =mesProductCustomerMapper.countBySearchDto(dto);
+		if(count > 0) {
+			List<MesProduct> mesProducts =mesProductCustomerMapper.searchproductList(dto,page);
+			return PageResult.<MesProduct>builder().total(count).data(mesProducts).build();
+		}
+		return PageResult.<MesProduct>builder().build();
+	}
+
+	public void updateProduct(MesProductVo productVo) {
+		BeanValidator.check(productVo);
+		//添加前进行查询
+		MesProduct before=mesProductMapper.selectByPrimaryKey(productVo.getId());
+		Preconditions.checkNotNull(before, "待更新的材料不存在");
+		//vo -- do
+		try {
+			MesProduct updateProduct=MesProduct.builder()
+					.id(productVo.getId())//id
+					.productId(productVo.getProductId())//材料自编号
+					.productMaterialname(productVo.getProductMaterialname())//材料名称
+					.productMaterialsource(productVo.getProductMaterialsource())//材料来源
+					.productTargetweight(Float.valueOf(productVo.getProductTargetweight()))//工艺重量
+					.productRealweight(Float.valueOf(productVo.getProductRealweight()))//投料重量
+					.productLeftweight(Float.valueOf(productVo.getProductLeftweight()))//剩余重量
+					.productHeatid(productVo.getProductHeatid())//炉号
+					.productImgid(productVo.getProductImgid())//图号
+					.productIrontype(productVo.getProductIrontype())//钢锭类别
+					.productIrontypeweight(Float.valueOf(productVo.getProductIrontypeweight()))//锭型
+					.productRemark(productVo.getProductRemark())//材料备注
+					.build();
+			updateProduct.setProductOperator("user01");
+			updateProduct.setProductOperateIp("127.0.0.1");
+			updateProduct.setProductOperateTime(new Date());
+
+			mesProductMapper.updateByPrimaryKeySelective(updateProduct);
+		} catch (Exception e) {
+			throw new SysMineException("更改过程有问题");
+		}
+	}
+
+	//批量添加
 	public void insertFrom(MesProductVo mesProductVo) {
 		//校验mesProductVo
 		BeanValidator.check(mesProductVo);
@@ -59,21 +180,29 @@ public class ProductService {
 						.productMaterialsource(mesProductVo.getProductMaterialsource())//材料来源
 						.productMaterialname(mesProductVo.getProductMaterialname())//材料名称
 						.productRemark(mesProductVo.getProductRemark())//备注
+						.productHeatid(mesProductVo.getProductHeatid())//炉号
 						.build();
-
 				mesProduct.setProductOperator("user01");
 				mesProduct.setProductOperateIp("127.0.0.1");
 				mesProduct.setProductOperateTime(new Date());
 
-
 				//批量添加
-				//				mesProducBatchMapper.insert(mesProduct);
+				mesProducBatchMapper.insert(mesProduct);
 			} catch (Exception e) {
 				throw new SysMineException("创建过程有问题");
 			}
 
 		}
 
+	}
+
+	//product.jsp的批量启动
+	public void productBatchStart(String ids) {
+		System.out.println(ids);
+		if(ids!=null && ids.length()>0) {
+			String[] Arrayid= ids.split("&");
+			mesProductCustomerMapper.productBatchStartByid(Arrayid);
+		}
 	}
 
 
@@ -151,7 +280,7 @@ public class ProductService {
 			//获取最大的数据库中最大的product-id
 			String dbMaxId=mesProductCustomerMapper.getMaxId();
 			System.err.println("dbMaxId: "+dbMaxId);
-			
+
 			Integer dbMaxIdInt =0;
 			if(dbMaxId!=null) {
 				//处理了 dbMaxId "ZX_P0000xx"---"xx"
@@ -162,12 +291,10 @@ public class ProductService {
 				//String --- int
 				dbMaxIdInt=Integer.parseInt(dbMaxIDReplace_0);
 				setCurrentdbidscount(new Long(0));
-				System.out.println("setCurrentdbidscount------------------->"+this.currentdbidscount);
 				//根据最大的product_id进行循环，判断出空出的product_id值，并添加入ids
 				for(int i=1;i<=dbMaxIdInt;i++) {
 					String intoDbId=getIdPre() +  getIdAfter(i);
 					String dbProduct_id=mesProductCustomerMapper.selectProductIdByintoDbId("\'"+intoDbId+"\'");
-					System.out.println("intoDbId---------->"+intoDbId);
 					if(dbProduct_id==null) {
 						this.ids.add(intoDbId);
 						continue;
@@ -188,7 +315,6 @@ public class ProductService {
 			for (int i = 0; i < (ocounts-idsSize); i++) {
 				this.ids.add(getIdPre() +  getIdAfter(i));
 			}
-			System.out.println(2);
 			return this.ids;
 		}
 
@@ -222,6 +348,15 @@ public class ProductService {
 			return "IdGenerator [ids=" + ids + "]";
 		}
 	}
+
+	
+
+	
+
+
+
+
+
 
 
 }

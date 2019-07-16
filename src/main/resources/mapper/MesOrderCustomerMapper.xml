@@ -60,6 +60,7 @@
 		SELECT count(1) FROM mes_order
 		<include refid="queryConditions" />
 	</select>
+	
 	<sql id="queryConditions">
 		<where>
 			<if test="dto.search_status!=null">

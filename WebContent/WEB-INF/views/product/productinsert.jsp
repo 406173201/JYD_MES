@@ -27,7 +27,17 @@
 						<form action="/product/insert.json" id="materialForm"
 							method="post" >
 							
-							<div class="row" style="background-color: white; height: 50px;">
+							<div class="row" style="background-color: #e4e6e9; height: 50px;">
+								<div class="col-xs-2">炉号</div>
+								<div class="dataTables_length col-xs-4"
+									id="dynamic-table_length">
+									<input type="text" id="input-productHeatid" name="productHeatid"
+										class="text ui-widget-content ui-corner-all" />
+								</div>
+								
+							</div>
+							
+							<div class="row" style="background-color: white; height: 50px;  padding-top: 7px;">
 								<div class="col-xs-2">图号</div>
 								<div class="dataTables_length col-xs-4"
 									id="dynamic-table_length">

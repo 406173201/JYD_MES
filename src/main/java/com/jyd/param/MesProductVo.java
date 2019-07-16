@@ -57,6 +57,8 @@ public class MesProductVo {
 	@NotBlank(message = "材料来源不可以为空")
 	private String productMaterialsource;
 	
+	@NotBlank(message = "炉号不可以为空")
+	private String productHeatid;
 	
 	private String productStatus;
 	
