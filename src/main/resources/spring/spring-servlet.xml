@@ -7,6 +7,16 @@
 	<!-- 2.启动注解驱动的spring mvc 功能 -->
 	<mvc:annotation-driven />
 
+	<!-- 配置拦截器 -->
+ 	<mvc:interceptors>
+ 		<bean class="com.jyd.common.HttpInterceptor"></bean>
+ 		<mvc:interceptor> 
+ 	    	<mvc:mapping path="/**"/>  
+        	<bean class="com.jyd.interceptor.SameUrlDataInterceptor"/>
+        </mvc:interceptor>  
+ 	</mvc:interceptors>
+
+
 	<!-- 1.启动包扫描 -->
 	<context:component-scan
 		base-package="com.jyd.controller" />

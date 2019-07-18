@@ -11,7 +11,8 @@ $(function(){
 	var url;//查询url
 	var keyword;//关键字
 	var search_msource;//查询材料来源
-
+	var search_status;
+	
 	//加载模板内容进入html
 	//01从模板中获取页面布局内容
 	//orderListTemplate就是mustache模板的id值
@@ -41,7 +42,8 @@ $(function(){
 			url = "/product/productIron.json";
 		}
 		keyword = $("#keyword").val();
-		search_msource = $("#search_msource").val();
+		search_status=$("#search_status").val();
+		search_msource=$("#search_msource").val();
 		//发送请求
 		$.ajax({
 			url : url,
@@ -49,7 +51,8 @@ $(function(){
 				pageNo : pageNo,
 				pageSize : pageSize,
 				keyword : keyword,
-				search_msource : search_msource,
+				search_status:search_status,
+				search_msource:search_msource,
 			},
 			type : 'POST',
 			success : function(result) {//jsondata  jsondata.getData=pageResult  pageResult.getData=list

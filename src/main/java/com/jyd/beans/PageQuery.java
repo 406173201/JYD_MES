@@ -22,7 +22,26 @@ public class PageQuery {
     @Setter
     private int offset;
 
+    
+    
     public int getOffset() {
         return (pageNo - 1) * pageSize;
     }
+
+	public PageQuery(int pageNo, int pageSize) {
+		super();
+		this.pageNo = pageNo;
+		this.pageSize = pageSize;
+	}
+
+	public PageQuery(int pageNo, int pageSize, int offset) {
+		super();
+		this.pageNo = pageNo;
+		this.pageSize = pageSize;
+		this.offset = offset;
+	}
+	public PageQuery() {
+		super();
+	}
+	
 }

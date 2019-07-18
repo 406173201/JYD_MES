@@ -28,5 +28,13 @@ public interface MesProductCustomerMapper {
 	//绑定页面分页
 	List<MesProduct> productBindSearchPage(@Param("dto") SearchProductDto dto,@Param("page") PageQuery page);
 
+	int countBySearchweight(@Param("dto") SearchProductDto dto);
+	//绑定操作（do）页面分页
+	List<MesProduct> SearchByweight(@Param("dto") SearchProductDto dto,@Param("page") PageQuery page);
 	
+	//绑定操作（SHOW）页面分页
+	List<MesProduct> countBindKidsByPid(@Param("dto") SearchProductDto dto,@Param("page") PageQuery page);
+
+	void updateKidsToNoPid(@Param("id") Integer integer);
+
 }

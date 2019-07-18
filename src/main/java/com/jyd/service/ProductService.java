@@ -39,7 +39,7 @@ public class ProductService {
 
 	// 一开始就定义一个id生成器
 	private IdGenerator ig = new IdGenerator();
-	
+
 	//绑定页面分页
 	public PageResult<MesProduct> productBindSearchPage(SearchProductParam param, PageQuery page) {
 		BeanValidator.check(param);
@@ -51,7 +51,7 @@ public class ProductService {
 		if(StringUtils.isNotBlank(param.getSearch_msource())) {
 			dto.setSearch_msource(param.getSearch_msource());
 		}
-		
+
 		int count =mesProductCustomerMapper.countBySearchDto(dto);
 		if(count > 0) {
 			List<MesProduct> mesProducts =mesProductCustomerMapper.productBindSearchPage(dto,page);
@@ -59,7 +59,7 @@ public class ProductService {
 		}
 		return PageResult.<MesProduct>builder().build();
 	}
-	
+
 	//查看库房页面分页
 	public PageResult<MesProduct> seacheProductComeList(SearchProductParam param, PageQuery page) {
 		BeanValidator.check(param);
@@ -71,10 +71,13 @@ public class ProductService {
 		if(StringUtils.isNotBlank(param.getSearch_msource())) {
 			dto.setSearch_msource(param.getSearch_msource());
 		}
-		
+
 		int count =mesProductCustomerMapper.countBySearchDto(dto);
 		if(count > 0) {
 			List<MesProduct> mesProducts =mesProductCustomerMapper.seacheProductComeList(dto,page);
+//			for (MesProduct mesProduct : mesProducts) {
+//				System.out.println(mesProduct.toString());
+//			}
 			return PageResult.<MesProduct>builder().total(count).data(mesProducts).build();
 		}
 		return PageResult.<MesProduct>builder().build();
@@ -118,6 +121,9 @@ public class ProductService {
 		int count =mesProductCustomerMapper.countBySearchDto(dto);
 		if(count > 0) {
 			List<MesProduct> mesProducts =mesProductCustomerMapper.searchproductList(dto,page);
+//			for (MesProduct mesProduct : mesProducts) {
+//				System.out.println(mesProduct.toString());
+//			}
 			return PageResult.<MesProduct>builder().total(count).data(mesProducts).build();
 		}
 		return PageResult.<MesProduct>builder().build();
@@ -128,6 +134,9 @@ public class ProductService {
 		//添加前进行查询
 		MesProduct before=mesProductMapper.selectByPrimaryKey(productVo.getId());
 		Preconditions.checkNotNull(before, "待更新的材料不存在");
+		if(before.getProductBakweight()!=before.getProductLeftweight()) {
+			throw new SysMineException("存在绑定关系");
+		}
 		//vo -- do
 		try {
 			MesProduct updateProduct=MesProduct.builder()
@@ -205,6 +214,115 @@ public class ProductService {
 		}
 	}
 
+	//绑定操作（do）页面分页
+	public PageResult<MesProduct> productBindDoSearchPage(SearchProductParam param, PageQuery page) {
+		BeanValidator.check(param);
+		BeanValidator.check(page);
+		SearchProductDto dto= new SearchProductDto();
+		if(StringUtils.isNotBlank(param.getSearch_msource())) {
+			dto.setSearch_msource(param.getSearch_msource());
+		}
+
+		int count =mesProductCustomerMapper.countBySearchweight(dto);
+		if(count > 0) {
+			List<MesProduct> mesProducts =mesProductCustomerMapper.SearchByweight(dto,page);
+			return PageResult.<MesProduct>builder().total(count).data(mesProducts).build();
+		}
+		return PageResult.<MesProduct>builder().build();
+	}
+
+	//解绑操作页面（Show UnBIND）分页
+	public PageResult<MesProduct> productBindShowSearchPage(SearchProductParam param, PageQuery page) {
+		BeanValidator.check(param);
+		BeanValidator.check(page);
+		SearchProductDto dto= new SearchProductDto();
+		if(StringUtils.isNotBlank(param.getPId())) {
+			dto.setPId(Integer.parseInt(param.getPId()));
+		}
+		if(StringUtils.isNotBlank(param.getKeyword())) {
+			dto.setKeyword("%"+param.getKeyword()+"%");
+		}
+		if(StringUtils.isNotBlank(param.getSearch_msource())) {
+			dto.setSearch_msource(param.getSearch_msource());
+		}
+		System.out.println(dto.toString());
+		List<MesProduct> mesProducts =mesProductCustomerMapper.countBindKidsByPid(dto,new PageQuery(1,999999));
+		if(mesProducts.size()>0) {
+			return PageResult.<MesProduct>builder().total(mesProducts.size()).data(mesProducts).build();
+		}
+		return PageResult.<MesProduct>builder().build();
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//绑定操作
+	public void productBindKids(MesProductVo mesProductVo) {
+		//		BeanValidator.check(mesProductVo);
+		MesProduct pDto=new MesProduct();
+		MesProduct cDto=new MesProduct();
+		int pid=0;
+		Float pBakweightP=0f;
+		Float cproductTargetweight=0f;
+		if(mesProductVo.getPId()!=0) {
+			pid=mesProductVo.getPId();
+		}
+		if(StringUtils.isNotBlank(mesProductVo.getProductBakweight())) {
+			pBakweightP=Float.parseFloat(mesProductVo.getProductBakweight());
+		}
+		if(StringUtils.isNotBlank(mesProductVo.getProductTargetweight())) {
+			cproductTargetweight=Float.parseFloat(mesProductVo.getProductTargetweight());
+		}
+
+		if(pBakweightP-cproductTargetweight < 0) {
+			throw new SysMineException("要不够用了，不能在绑定啦！！！！！");
+		}
+		////////////////////////////
+		//更新父级材料信息
+		pDto.setId(pid);
+		pDto.setProductBakweight(pBakweightP-cproductTargetweight);
+		mesProductMapper.updateByPrimaryKeySelective(pDto);
+		////////////////////////
+		//更新子材料信息
+		cDto.setId(mesProductVo.getId());
+		cDto.setProductBakweight(cproductTargetweight);
+		cDto.setpId(pid);
+		cDto.setProductStatus(1);
+		mesProductMapper.updateByPrimaryKeySelective(cDto);
+
+	}
+
+
+	//解绑方法
+	public void productUnbindKids(MesProductVo mesProductVo) {
+		MesProduct pDto=new MesProduct();
+		MesProduct cDto=new MesProduct();
+		int pid=0;
+		Float pBakweightP=0f;
+		Float cproductTargetweight=0f;
+		if(mesProductVo.getPId()!=0) {
+			pid=mesProductVo.getPId();
+		}
+		if(StringUtils.isNotBlank(mesProductVo.getProductBakweight())) {
+			pBakweightP=Float.parseFloat(mesProductVo.getProductBakweight());
+		}
+		if(StringUtils.isNotBlank(mesProductVo.getProductTargetweight())) {
+			cproductTargetweight=Float.parseFloat(mesProductVo.getProductTargetweight());
+		}
+		////////////////////////////
+		//更新父级材料信息
+		pDto.setId(pid);
+		pDto.setProductBakweight(pBakweightP+cproductTargetweight);
+		mesProductMapper.updateByPrimaryKeySelective(pDto);
+		////////////////////////
+		//更新子材料信息
+		cDto.setId(mesProductVo.getId());
+		cDto.setProductBakweight(new Float(0));
+		cDto.setpId(null);
+		cDto.setProductStatus(0);
+		mesProductMapper.updateByPrimaryKeySelective(cDto);
+		mesProductCustomerMapper.updateKidsToNoPid(cDto.getId());
+	}
 
 
 	// 获取数据库所有的数量
@@ -224,6 +342,9 @@ public class ProductService {
 		ig.clear();
 		return list;
 	}
+
+
+
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// 1 默认生成代码
@@ -348,12 +469,6 @@ public class ProductService {
 			return "IdGenerator [ids=" + ids + "]";
 		}
 	}
-
-	
-
-	
-
-
 
 
 

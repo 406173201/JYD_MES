@@ -17,6 +17,8 @@ import lombok.ToString;
 @NoArgsConstructor
 public class SearchProductDto {
 	
+	private Integer pId;
+	
 	private String keyword;
     
     private String search_msource;

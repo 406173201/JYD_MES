@@ -9,7 +9,6 @@
 			<div id="dynamic-table_wrapper" class="col-sm-12"
 				style="margin: 10px 1px 15px 1px">
 				<input type="hidden" id="bind-id" value=""> <label>
-				<input type="hidden" id="product-realweight"  value=""> <label>
 					原料编号 </label> <input type="text" readonly="readonly" id="ProductId2"
 					name="productId" /> <label> 理论剩余重量</label> <input type="text"
 					readonly="readonly" id="productBakweight2" name="productBakweight" />
@@ -89,4 +88,42 @@
 	</div>
 
 </div>
-
+
+<script type="text/javascript">
+	
+function ProductUnbindKids(flag){
+	alert("flag-----"+flag);
+	//BIND-Show 页面的解绑事件
+	alert(1)
+	if(flag){
+		$("#productUnBind .product-bindShow").click(function(e){
+			alert(flag)
+			//阻止默认事件
+			e.preventDefault();
+			//阻止事件传播
+			e.stopPropagation();
+			var productId = $(this).attr("data-id");
+			alert(productId);
+		});
+		flag=!flag;
+	}else{
+		return ;	
+	}
+}
+function ProductBindKids(flag){
+	//BIND-DO 页面1的绑定事件
+	$("#productBindKids .product-bindDo").click(function(e){
+		//阻止默认事件
+		e.preventDefault();
+		//阻止事件传播
+		e.stopPropagation();
+		var productId = $(this).attr("data-id");
+		console.log($(this));
+		alert(productId);
+
+	});
+
+}
+	
+</script>>
+

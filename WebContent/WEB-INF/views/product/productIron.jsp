@@ -37,11 +37,13 @@
 										class="form-control input-sm" placeholder="关键词"
 										aria-controls="dynamic-table"> <label>
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;是否启用 <select
-										id="search_msource" name="search_msource"
+										id="search_status" name="search_status"
 										aria-controls="dynamic-table" class="form-control input-sm">
 											<option value="0">未启用</option>
 											<option value="1">已启用</option>
-									</select> &nbsp;&nbsp;&nbsp;&nbsp;
+									</select>
+									<input type="hidden" id="search_msource" value="钢锭" name="search_msource"/>
+									 &nbsp;&nbsp;&nbsp;&nbsp;
 										<button class="btn btn-info fa fa-check research"
 											style="margin-bottom: 6px;" type="button">刷新</button>
 								</div>

@@ -2,6 +2,7 @@ package com.jyd.param;
 
 import java.util.Date;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -15,8 +16,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Setter
-@ToString
 @Getter
+@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -64,4 +65,5 @@ public class MesProductVo {
 	
 	private String productRemark;
 
+	
 }

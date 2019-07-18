@@ -55,7 +55,7 @@ $(function(){
 			success : function(result) {//jsondata  jsondata.getData=pageResult  pageResult.getData=list
 				//渲染order列表和页面--列表+分页一起填充数据显示条目
 				renderOrderListAndPage(result, url);
-				console.log(result);
+//				console.log(result);
 			}
 		});
 	}
@@ -132,14 +132,12 @@ $(function(){
 				$("#productBakweight2").val(tageProduct_P.productBakweight);//理论剩余重量
 				$("#productLeftweight2").val(tageProduct_P.productLeftweight);//剩余重量
 				$("#ProductId2").val(tageProduct_P.productId);//编号
-				$("#product-realweight").val(tageProduct_P.productRealweight);//投料重量
-
 			}
 			loadBindListDo();
 			loadBindListShow();
 		})
 	};
-
+	
 ///////////////////////////////////////////////////////////////////////////////
 
 	//绑定页面
@@ -165,7 +163,7 @@ $(function(){
 			type : 'POST',
 			success : function(result) {
 				renderProductBind(result, url,loadBindListDo);
-
+				$("#productBindKids .productBind").addClass("product-bindDo");
 			}
 		});
 	}
@@ -191,7 +189,7 @@ $(function(){
 							},
 
 						})
-						$('#productBindKids').html(rendered);
+				$('#productBindKids').html(rendered);
 			} else {
 				$('#productBindKids').html('') ;
 			}
@@ -210,7 +208,7 @@ $(function(){
 			showMessage("获取订单列表", result.msg, false);
 		}
 	}
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//解绑页面分页查询
 	//获取模板
 	var productBindShowListTemplate=$("#productBindShowListTemplate").html();
@@ -235,7 +233,8 @@ $(function(){
 			success : function(result) {
 //				console.log(result);
 				renderProductUnbindKids(result, url,loadBindListShow);
-
+				$("#productUnBind .productBind").addClass("product-bindShow");
+				$("#productUnBind .productBind").addClass("btn-danger");
 			}
 		});
 	}	
@@ -261,7 +260,8 @@ $(function(){
 								}
 							},
 						})
-						$('#productUnBind').html(rendered);
+					$('#productUnBind').html(rendered);
+				
 			} else {
 				$('#productUnBind').html('');
 			}
@@ -280,95 +280,33 @@ $(function(){
 			showMessage("获取订单列表", result.msg, false);
 		}
 	}
-
+})
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 	function ProductUnbindKids(){
 		//BIND-Show 页面的解绑事件
-		$(".product-bindShow").click(function(e){
+		$("#productUnBind .product-bindShow").click(function(e){
 			//阻止默认事件
 			e.preventDefault();
 			//阻止事件传播
 			e.stopPropagation();
 			var productId = $(this).attr("data-id");
-			//父级id
-			var pId=$("#bind-id").val();
-			//工艺重量
-			var targetWeightId="#productTargetweight"+productId;
-			var productTargetweight =$(targetWeightId).val();
-			//父级备份重量
-			var productBakweightP =$("#productBakweight2").val();
-			//解绑后父级备份重量
-			var productBakweightP2=parseFloat(productBakweightP)+parseFloat(productTargetweight);
-			$.ajax({
-				url : "/product/productUnbindKids.json",
-				data : {
-					Id:productId,      
-					pId:pId,
-					productTargetweight:productTargetweight,
-					productBakweight:productBakweightP,
-				},
-				type : 'POST',
-				success : function(result) {
-					if(resulet.ret){
-						$("#productBakweight2").val(productBakweightP2);
-						loadBindListDo();
-						loadBindListShow();//刷新页面
-					}else{
-						showMessage("", data.msg, false);
-					}
-				}
-			});
-
+			alert(productId);
 		});
 	}
 
 	function ProductBindKids(){
 		//BIND-DO 页面1的绑定事件
-		$(".product-bindDo").click(function(e){
+		$("#productBindKids .product-bindDo").click(function(e){
+			alert(12);
 			//阻止默认事件
 			e.preventDefault();
 			//阻止事件传播
 			e.stopPropagation();
 			var productId = $(this).attr("data-id");
-			var pId=$("#bind-id").val();
-			var targetWeightId="#productTargetweight"+productId;
-			var productTargetweight =$(targetWeightId).val();
-			var productBakweightP =$("#productBakweight2").val();
-			var productBakweightP2=parseFloat(productBakweightP)-parseFloat(productTargetweight);
-			if(productBakweightP2>0){
-				$.ajax({
-					url : "/product/productBindKids.json",
-					data : {
-						Id:productId,      
-						pId:pId,
-						productTargetweight:productTargetweight,
-						productBakweight:productBakweightP,
-					},
-					type : 'POST',
-					success : function(result) {
-						if(resulet.ret){
-							$("#productBakweight2").val(productBakweightP2);
-							loadBindListDo();
-							loadBindListShow();//刷新页面
-						}else{
-							showMessage("", data.msg, false);
-						}
-					}
-				});
-			}else{
-				alert("父级材料不够用，请稍后再绑定！")
-			}
+			alert(productId);
 		});
 	}
-	
-	///刷新按钮
-	$(".researchbind").click(function(e) {
-		e.preventDefault();
-		$("#productBindListPage .pageNo").val(1);
-		loadBindListDo();
-		loadBindListShow();//刷新页面
-	});
-})
+
 
 
 

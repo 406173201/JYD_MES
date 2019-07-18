@@ -56,6 +56,10 @@ public class MesProduct {
 
     private String productOperateIp;
 
+    private MesProduct parentProduct;
+    
+    
+    
     public Integer getId() {
         return id;
     }

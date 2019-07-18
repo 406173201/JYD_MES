@@ -3,13 +3,13 @@
 {{#productBindList}}
  <tr role="row" class="order-name odd" data-id="{{id}}"><!--even -->
 	<td>{{productId}}</td>
-	<td>{{pId}}</td>
+	<td>{{parentProduct.productId}}</td>
 	<td>{{productMaterialname}}</td>
 	<td>{{productMaterialsource}}</td>
 	<td>{{productTargetweight}}</td>
 	<td>{{productRealweight}}</td>
 	<td>{{productLeftweight}}</td> 
-	<td>{{product_bakweight}}</td>
+	<td>{{productBakweight}}</td>
 	<td>{{productHeatid}}</td> 
 	<td>{{productImgid}}</td> 
 	<td>{{productIrontype}}</td> 

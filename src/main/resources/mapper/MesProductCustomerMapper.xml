@@ -40,7 +40,30 @@
 			property="productOperateTime" jdbcType="TIMESTAMP" />
 		<result column="product_operate_ip" property="productOperateIp"
 			jdbcType="VARCHAR" />
+		<association property="parentProduct"	javaType="com.jyd.model.MesProduct">
+			<id column="p_id" property="id" />
+			<result column="p_p_id" property="pId" jdbcType="INTEGER" />
+			<result column="p_product_id" property="productId"	jdbcType="VARCHAR" />
+			<result column="p_product_orderid" property="productOrderid" jdbcType="INTEGER" />
+			<result column="p_product_planid" property="productPlanid" jdbcType="INTEGER" />
+			<result column="p_product_targetweight"	property="productTargetweight" jdbcType="REAL" />
+			<result column="p_product_realweight"	property="productRealweight" jdbcType="REAL" />
+			<result column="p_product_leftweight"	property="productLeftweight" jdbcType="REAL" />
+			<result column="p_product_bakweight" property="productBakweight" jdbcType="REAL" />
+			<result column="p_product_irontype" property="productIrontype"	jdbcType="VARCHAR" />
+			<result column="p_product_irontypeweight" property="productIrontypeweight" jdbcType="REAL" />
+			<result column="p_product_materialname"	property="productMaterialname" jdbcType="VARCHAR" />
+			<result column="p_product_imgid" property="productImgid" jdbcType="VARCHAR" />
+			<result column="p_product_heatid" property="productHeatid" jdbcType="VARCHAR" />
+			<result column="p_product_materialsource"	property="productMaterialsource" jdbcType="VARCHAR" />
+			<result column="p_product_status" property="productStatus" jdbcType="INTEGER" />
+			<result column="p_product_remark" property="productRemark" jdbcType="VARCHAR" />
+			<result column="p_product_operator" property="productOperator" jdbcType="VARCHAR" />
+			<result column="p_product_operate_time" property="productOperateTime" jdbcType="TIMESTAMP" />
+			<result column="p_product_operate_ip" property="productOperateIp" jdbcType="VARCHAR" />
+		</association>
 	</resultMap>
+
 	<sql id="Base_Column_List">
 		id, p_id, product_id, product_orderid, product_planid,
 		product_targetweight, product_realweight,
@@ -51,19 +74,62 @@
 		product_remark,
 		product_operator, product_operate_time, product_operate_ip
 	</sql>
+	<sql id="parentProduct_List">
+		p.id p_id,p.p_id p_p_id,p.product_id p_product_id,p.product_orderid p_product_orderid,p.product_planid p_product_planid,p.product_targetweight p_product_targetweight,
+		p.product_realweight p_product_realweight,p.product_leftweight p_product_leftweight,p.product_bakweight p_product_bakweight,p.product_irontype p_product_irontype,
+		p.product_irontypeweight p_product_irontypeweight,p.product_materialname p_product_materialname,p.product_imgid p_product_imgid,p.product_heatid p_product_heatid,
+		p.product_materialsource p_product_materialsource,p.product_status p_product_status,p.product_remark p_product_remark,
+		p.product_operator p_product_operator,p.product_operate_time p_product_operate_time,p.product_operate_ip p_product_operate_ip
+		
+	</sql>
+	<sql id="KidProduct_List">
+	c.id id, c.p_id p_id,c.product_id product_id,c.product_orderid product_orderid,c.product_planid product_planid,
+		c.product_targetweight product_targetweight, c.product_realweight product_realweight,
+		c.product_leftweight product_leftweight,
+		c.product_bakweight product_bakweight, c.product_irontype product_irontype, c.product_irontypeweight product_irontypeweight,
+		c.product_materialname product_materialname, c.product_imgid product_imgid, c.product_heatid product_heatid,
+		c.product_materialsource product_materialsource, c.product_status product_status,
+		c.product_remark product_remark,
+		c.product_operator product_operator, c.product_operate_time product_operate_time, c.product_operate_ip product_operate_ip,
+	</sql>
 	
-	<select id="productBindSearchPage" resultMap="BaseResultMap" parameterType="map">
+	<select id="searchproductList" resultMap="BaseResultMap"
+		parameterType="map">
 		SELECT
-		<include refid="Base_Column_List" />
-		FROM mes_product
+		<include refid="KidProduct_List" />
+		<include refid="parentProduct_List" />
+		FROM mes_product c
+		LEFT JOIN
+		mes_product p
+		ON p.id =c.p_id
 		<include refid="queryConditions" />
-		AND product_status = 1
-		ORDER BY product_operate_time DESC,id DESC
+		AND c.product_status = 0
+		ORDER BY c.product_operate_time DESC,c.id DESC
 		limit
 		#{page.offset},
 		#{page.pageSize}
 	</select>
-	
+
+
+	<select id="productBindSearchPage" resultMap="BaseResultMap"
+		parameterType="map">
+		<include refid="KidProduct_List" />
+		<include refid="parentProduct_List" />
+		FROM mes_product c
+		LEFT JOIN
+		mes_product p
+		ON p.id =c.p_id
+		<include refid="queryConditions" />
+		AND c.product_status = 1
+		AND c.product_leftweight>0
+		AND c.product_realweight>0
+		ORDER BY
+		c.product_operate_time DESC,c.id DESC
+		limit
+		#{page.offset},
+		#{page.pageSize}
+	</select>
+
 	<sql id="queryBind">
 		<where>
 			<if test="dto.search_msource!=null">
@@ -93,16 +159,21 @@
 			</if>
 		</where>
 	</sql>
-	
+
 
 	<select id="seacheProductIronList" resultMap="BaseResultMap"
 		parameterType="map">
 		SELECT
-		<include refid="Base_Column_List" />
-		FROM mes_product
+		<include refid="KidProduct_List" />
+		<include refid="parentProduct_List" />
+		FROM mes_product c
+		LEFT JOIN
+		mes_product p
+		ON p.id =c.p_id
 		<include refid="queryConditions" />
-		AND product_status = #{dto.search_status}
-		ORDER BY product_operate_time DESC,id DESC
+		AND c.product_status = #{dto.search_status}
+		ORDER BY c.product_operate_time
+		DESC,c.id DESC
 		limit
 		#{page.offset},
 		#{page.pageSize}
@@ -135,69 +206,118 @@
 
 	<select id="countBySearchDto" resultType="int"
 		parameterType="map">
-		SELECT count(1) FROM mes_product
+		SELECT count(1) FROM mes_product c
 		<include refid="queryConditions" />
 	</select>
 
-	<select id="searchproductList" resultMap="BaseResultMap"
-		parameterType="map">
-		SELECT
-		<include refid="Base_Column_List" />
-		FROM mes_product
-		<include refid="queryConditions" />
-		AND product_status = 0
-		ORDER BY product_operate_time DESC,id DESC
-		limit
-		#{page.offset},
-		#{page.pageSize}
-	</select>
+	
 
 	<select id="seacheProductComeList" resultMap="BaseResultMap"
 		parameterType="map">
 		SELECT
-		<include refid="Base_Column_List" />
-		FROM mes_product
+		<include refid="KidProduct_List" />
+		<include refid="parentProduct_List" />
+		FROM mes_product c
+		LEFT JOIN
+		mes_product p
+		ON p.id =c.p_id
 		<include refid="queryConditions" />
-		AND product_status = 1
-		ORDER BY product_operate_time DESC,id DESC
+		AND c.product_status = 1
+		ORDER BY c.product_operate_time DESC,c.id DESC
 		limit
 		#{page.offset},
 		#{page.pageSize}
 	</select>
-	
-	
-	
+
+
+
 	<sql id="queryConditions">
 		<where>
 			<if test="dto.search_msource==null">
-				AND mes_product.`product_materialsource` IN
+				AND c.`product_materialsource` IN
 				('钢材','外购件','外协件')
 			</if>
 			<if test="dto.search_msource!=null">
-				AND mes_product.`product_materialsource`=
+				AND c.`product_materialsource`=
 				#{dto.search_msource}
 			</if>
 			<if test="dto.keyword!=null and dto.keyword != ''">
 				AND (
-				(product_id like #{dto.keyword}) or
-				(p_id like
+				(c.product_id like #{dto.keyword}) or
+				(c.p_id like
 				#{dto.keyword}) or
-				(product_materialname like #{dto.keyword}) or
-				(product_materialsource like #{dto.keyword}) or
-				(product_targetweight like #{dto.keyword}) or
-				(product_realweight
+				(c.product_materialname like #{dto.keyword}) or
+				(c.product_materialsource like #{dto.keyword}) or
+				(c.product_targetweight like #{dto.keyword}) or
+				(c.product_realweight
 				like #{dto.keyword}) or
-				(product_leftweight like #{dto.keyword}) or
-				(product_imgid like #{dto.keyword}) or
-				(product_irontype like
+				(c.product_leftweight like #{dto.keyword}) or
+				(c.product_imgid like #{dto.keyword}) or
+				(c.product_irontype like
 				#{dto.keyword}) or
-				(product_irontypeweight like #{dto.keyword}) or
-				(product_status like #{dto.keyword}) or
-				(product_remark like
+				(c.product_irontypeweight like #{dto.keyword}) or
+				(c.product_status like #{dto.keyword}) or
+				(c.product_remark like
 				#{dto.keyword}) or
-				(product_heatid like #{dto.keyword})
+				(c.product_heatid like #{dto.keyword})
 				)
 			</if>
 		</where>
 	</sql>
+
+	<select id="countBySearchweight" resultType="int"
+		parameterType="map">
+		SELECT count(1) FROM mes_product c 
+		<include refid="queryConditions" />
+		AND c.p_id IS NULL
+		AND c.product_status = 0
+		AND c.product_realweight = 0
+		AND
+		c.product_leftweight = 0
+		AND c.product_targetweight > 0
+	</select>
+
+	<select id="SearchByweight" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT
+		<include refid="KidProduct_List" />
+		<include refid="parentProduct_List" />
+		FROM mes_product c
+		LEFT JOIN
+		mes_product p
+		ON p.id =c.p_id
+		<include refid="queryConditions" />
+		AND	c. p_id IS NULL
+		AND c.product_status = 0
+		AND c.product_realweight = 0
+		AND
+		c.product_leftweight = 0
+		AND product_targetweight > 0
+		ORDER BY
+		c.product_operate_time DESC,id DESC
+		limit
+		#{page.offset},
+		#{page.pageSize}
+	</select>
+
+	<select id="countBindKidsByPid" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM mes_product
+		WHERE p_id = #{dto.pId}
+		AND product_status = 1
+		AND
+		product_bakweight > 0
+		AND product_targetweight > 0
+		ORDER BY
+		product_operate_time DESC,id DESC
+		limit
+		#{page.offset},
+		#{page.pageSize}
+	</select>
+	<update id="updateKidsToNoPid" parameterType="map">
+		update mes_product
+		set p_id = null where id= #{id}
+	</update>
 </mapper>
